@@ -46,6 +46,27 @@ func main() {
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}))
+	
+	r.GET("/health", func(c *gin.Context) {
+		// Basic Server Check
+		status := gin.H{
+			"status": "UP",
+			"service": "game-wallet",
+		}
+
+		ctx := context.Background()
+		_, err := client.Prisma.QueryRaw("SELECT 1").Exec(ctx)
+		
+		if err != nil {
+			status["database"] = "DOWN"
+			status["error"] = err.Error()
+			c.JSON(503, status)
+			return
+		}
+
+		status["database"] = "CONNECTED"
+		c.JSON(200, status)
+	})
 
 	// 5. Define Routes
 	r.POST("/signup", h.Signup)
