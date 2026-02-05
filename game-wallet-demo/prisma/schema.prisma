@@ -1,0 +1,62 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 1. Client for Go (Gin Transaction Service)
+generator go {
+  provider = "go run github.com/steebchen/prisma-client-go"
+}
+
+// --- MODELS ---
+
+model User {
+  id           String      @id @default(uuid())
+  username     String      @unique
+  password     String      // Hashed
+  referralCode String      @unique
+  referredBy   String?
+  createdAt    DateTime    @default(now())
+  
+  inventory    Inventory?
+  account      Account?
+}
+
+model Inventory {
+  id            String @id @default(uuid())
+  userId        String @unique
+  user          User   @relation(fields: [userId], references: [id])
+  goldCoins     Int    @default(0)
+  treasureBoxes Int    @default(0)
+}
+
+model Account {
+  id            String        @id @default(uuid())
+  userId        String?       @unique // Null for System Treasury
+  user          User?         @relation(fields: [userId], references: [id])
+  name          String?       // e.g. "Main Wallet", "Treasury"
+  
+  cachedBalance Int           @default(0)
+  version       Int           @default(0) // Optimistic Locking
+  
+  entries       LedgerEntry[]
+}
+
+model Journal {
+  id          String        @id @default(uuid())
+  description String
+  type        String        // TOPUP, PURCHASE, BONUS
+  createdAt   DateTime      @default(now())
+  entries     LedgerEntry[]
+}
+
+model LedgerEntry {
+  id        String   @id @default(uuid())
+  amount    Int
+  accountId String
+  account   Account  @relation(fields: [accountId], references: [id])
+  journalId String
+  journal   Journal  @relation(fields: [journalId], references: [id])
+}
