@@ -55,6 +55,7 @@ func main() {
         MaxAge:           12 * time.Hour,
 	}))
 
+	r.GET("/health", handlers.HealthCheck(client))
 	// Define Routes
 	r.POST("/signup", h.Signup)
 	r.POST("/login", h.Login)
