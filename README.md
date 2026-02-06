@@ -2,7 +2,17 @@
 
 A high-performance, double-entry ledger system built with **Go (Golang)**, **Gin**, and **PostgreSQL**. Designed to handle transactional game economy features like currency balances, inventory management, treasury audits, and referral bonuses with optimistic locking for data integrity.
 
-![Architecture Diagram](./architecture-diagram.png)
+---
+
+## ✨ Live Link : 👉 [game-wallet ↗](https://happy-wave-06fe03900.4.azurestaticapps.net/)
+
+## Architecture
+![Architecture Diagram](https://github.com/Pramod-325/game-transactions/blob/main/game-wallet-demo/public/game-wallet-arch.png)
+*(Place your architecture image in the root folder and name it `architecture-diagram.png`)*
+
+---
+## 🔗 Prisma Schema- ERD
+![Architecture Diagram](https://github.com/Pramod-325/game-transactions/blob/main/game-wallet-demo/public/tables.jpg)
 *(Place your architecture image in the root folder and name it `architecture-diagram.png`)*
 
 ---
@@ -110,3 +120,106 @@ ensure .env file with "VITE_API_URL" set to your backend address
 ```
 
 Frontend Server will start at [localhost:5173](http://localhost:5173)
+
+
+# 📚 Game Wallet Working API Documentation & Backend Processes
+
+This section details the internal engineering ensuring data integrity, concurrency safety, and performance.
+
+## 🔐 Authentication Process
+
+The system uses **Stateless JWT** (JSON Web Token) authentication.
+
+1. **Login**: User exchanges credentials for a signed `Bearer Token`
+2. **Middleware**: Validates the signature using `JWT_SECRET` and injects the `UserID` into the Gin Context for handlers to use safely
+
+---
+
+## ⚙️ Core Engineering Concepts
+
+### 1. Optimistic Locking (Concurrency Control)
+
+**Problem**: "Double Spending" race conditions when multiple requests try to spend money simultaneously.
+
+**Solution**: Every Wallet (Account) has a `version` integer.
+
+**Execution**:
+- Transaction A reads `Version: 1`
+- Transaction B reads `Version: 1`
+- Transaction A updates balance and sets `Version: 2` → Success
+- Transaction B tries to update `WHERE version = 1` → Fails (Version is now 2)
+- **Result**: Transaction B is rejected (409 Conflict), preserving data integrity
+
+### 2. Double-Entry Ledger System
+
+**Philosophy**: Money is never destroyed, only moved.
+
+**Flow**: A purchase consists of two distinct movements:
+- **Debit**: User Wallet (Balance decreases)
+- **Credit**: System Treasury (Balance increases)
+
+**Auditability**: `Sum(User Balances) + Sum(Treasury)` always equals the total economy size.
+
+### 3. ⚡ Async Treasury Worker (The "Batcher")
+
+**The Bottleneck**: In a naive system, thousands of users buying items simultaneously would all fight for a lock on the single System Treasury row, causing massive latency.
+
+**The Solution**: A Hybrid Transaction Model implemented in `internal/worker/treasury_batcher.go`:
+
+1. **User Side (Synchronous)**: The user's balance and inventory are updated immediately in a strict ACID transaction. The user gets a generic "Success" response instantly.
+2. **Treasury Side (Asynchronous)**: The credit to the Treasury is pushed to a Go Channel (`queue`).
+3. **The Batcher**: A background worker groups these queued tasks (e.g., 100 at a time) and executes a single bulk update to the Treasury.
+
+**Performance**: Reduces database lock contention on the Treasury row from N times per second to ~2 times per second.
+
+---
+
+# 📡 API Endpoints Reference
+
+## 1. System Health
+- **Endpoint**: `GET /health`
+- **Auth**: ❌ Public
+- **Description**: Checks if the server is running and pings the Database
+- **Response**: `{ "status": "UP", "database": "CONNECTED" }`
+
+## 2. User Signup
+- **Endpoint**: `POST /signup`
+- **Auth**: ❌ Public
+- **Body**: `{ "username": "player1", "password": "pass", "referralCode": "opt" }`
+- **Process**: Atomic creation of User, Wallet, and Inventory
+
+## 3. User Login
+- **Endpoint**: `POST /login`
+- **Auth**: ❌ Public
+- **Body**: `{ "username": "player1", "password": "pass" }`
+- **Response**: Returns JWT Bearer Token
+
+## 4. Get Balance
+- **Endpoint**: `GET /balance`
+- **Auth**: ✅ Protected
+- **Response**: `{ "balance": 1000, "version": 5 }`
+
+## 5. Top-Up (Deposit)
+- **Endpoint**: `POST /top-up`
+- **Auth**: ✅ Protected
+- **Body**: `{ "amount": 100 }`
+- **Description**: Adds funds to the user's wallet via the Hybrid/Ledger flow
+
+## 6. Purchase Item
+- **Endpoint**: `POST /purchase`
+- **Auth**: ✅ Protected
+- **Body**: `{ "item": "gold_coin" }`
+- **Description**: Atomically deducts balance and adds item. Fails if funds are insufficient or if a race condition (optimistic lock) occurs
+
+---
+
+# 🧠 Key Learnings
+
+- **Developing a Go Application 😅**: I acknowledge using of gemini AI to help me code, Since I'm new to Go lang (for the project's requirement), I understand the drawbacks of AI generated code and need for manual control, as of now the project works without any problems.
+- **Race Conditions**: Implemented Optimistic Locking to handle high-concurrency spending safely
+- **Docker Optimization**: Reduced image size from 1.8GB to ~60MB using Multi-Stage Builds and Alpine Linux
+- **Hybrid Architecture**: Learned to split critical user-facing consistency (Sync) from backend aggregation (Async) using Go Channels
+- **Async Worker Pattern**: Implemented a buffered channel worker in Go to decouple high-frequency user writes from the central treasury bottleneck
+
+
+Made with 💖 for Dino Ventures 😉

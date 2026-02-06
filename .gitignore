@@ -24,6 +24,7 @@ main
 stress/
 # Test binary, built with 'go test -c'
 *.test
+test.md
 
 # Output files
 *.out
