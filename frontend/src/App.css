@@ -1,0 +1,121 @@
+:root {
+  font-family: Inter, system-ui, sans-serif;
+  background-color: #242424;
+  color: #f0f0f0;
+}
+
+/* Center everything in the viewport */
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.app-container {
+  width: 100%;
+  max-width: 800px;
+  padding: 1rem;
+  /* Ensures internal elements are centered */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card {
+  background: #333;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 100%; /* Spans container width */
+  box-sizing: border-box; /* Prevents padding from breaking width */
+  margin: 1rem 0;
+}
+
+/* Responsive Stats Bar */
+.stats-bar {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.stat-box {
+  background: #444;
+  padding: 1rem;
+  border-radius: 8px;
+  flex: 1; /* Equal width for both boxes */
+  text-align: center;
+}
+
+/* Form Elements */
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  border: 1px solid #555;
+  background: #222;
+  color: white;
+  box-sizing: border-box;
+}
+
+button {
+  border-radius: 8px;
+  padding: 0.8em 1.5em;
+  font-weight: 600;
+  background-color: #646cff; /* Primary color for visibility */
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+button:hover {
+  filter: brightness(1.2);
+}
+
+/* Shop items layout */
+.shop-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #2a2a2a;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+/* Stack stats vertically on small screens */
+@media (max-width: 600px) {
+  .stats-bar {
+    flex-direction: column;
+  }
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #444;
+  padding-bottom: 1rem;
+}
+
+.dashboard-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.topup-btn {
+  width: 100%;
+  background-color: #4caf50; /* Green for bank actions */
+  margin-top: 10px;
+}
+
+.logout-btn {
+  background-color: #ff4646;
+  font-size: 0.8rem;
+}
