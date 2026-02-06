@@ -29,6 +29,17 @@ A high-performance, double-entry ledger system built with **Go (Golang)**, **Gin
 
 ---
 
+## ⚒ Core Tasks (The Flows)
+**Status**: Successfully implemented all three required functional flows. ✅
+
+- **Wallet Top-up**: Implemented in ProcessTopUp (and exposed via /top-up). It correctly uses the "Hybrid" flow to credit the user instantly and queue the treasury update.
+
+- **Bonus/Incentive**: Implemented in Signup (via ProcessBonus). It correctly issues referral bonuses to both the new user and the referrer.
+
+- **Purchase/Spend**: Implemented in ProcessPurchase (and exposed via /purchase). It calculates costs and deducts from the user's wallet.
+
+**⚠️ Critical Constraints (The "Hard" Part) Status:** PARTIALLY FAILED The current code handles some concurrency aspects but fails on strict overdraft protection and idempotency due to time constraints.
+
 ## 🛠️ Tech Stack
 
 * **Language:** Go (Golang) 1.25+
