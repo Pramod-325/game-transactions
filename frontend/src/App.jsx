@@ -76,7 +76,8 @@ const LoginForm = ({ setToken, setView }) => {
         <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required />
         <button type="submit" style={{width: '100%'}}>Enter Game</button>
       </form>
-      <p onClick={() => setView("signup")} className="link">Need an account? Signup</p>
+      <p>Need an account?</p>
+      <button onClick={() => setView("signup")} className="link">Signup</button>
     </div>
   );
 };
