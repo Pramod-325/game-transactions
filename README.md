@@ -7,6 +7,7 @@ A high-performance, double-entry ledger system built with **Go (Golang)**, **Gin
 ## ⚠️ Due to limited Azure student credits, my backend server might stop soon !, please don't mind if it fails unfortunately while reviewing. But you can always run the app locally using the below steps.
 
 ## ✨ Live Link : 👉 [game-wallet ↗](https://happy-wave-06fe03900.4.azurestaticapps.net/)
+## ✨ Video Demo : 👉 [YouTube ↗](https://youtu.be/FeQ5H4d3ZsM)
 
 ## Architecture
 ![Architecture Diagram](https://github.com/Pramod-325/game-transactions/blob/main/game-wallet-demo/public/game-wallet-arch.png)
