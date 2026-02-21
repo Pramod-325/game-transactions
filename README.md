@@ -55,7 +55,7 @@ A high-performance, double-entry ledger system built with **Go (Golang)**, **Gin
 
 ## 💻 For Running Locally:
 
-your have two options: build from source, or pull the docker image.
+you have two options: build from source, or pull the docker image.
 
 ## ⚙️ Configuration (.env)
 
@@ -87,7 +87,7 @@ FRONTEND_URL=http://localhost:5173 #Your frontend domain
 ```
 
 ```ini
-Open two terminals two run backend and front end separately
+Open two terminals to run backend and front end separately
 ```
 ```bash
 # To run backend in Terminal-1
