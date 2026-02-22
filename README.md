@@ -15,7 +15,6 @@ A high-performance, double-entry ledger system built with **Go (Golang)**, **Gin
 ---
 ## 🔗 Prisma Schema- ERD
 ![Architecture Diagram](https://github.com/Pramod-325/game-transactions/blob/main/game-wallet-demo/public/tables.jpg)
-*(Place your architecture image in the root folder and name it `architecture-diagram.png`)*
 
 ---
 
